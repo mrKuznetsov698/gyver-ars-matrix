@@ -57,6 +57,7 @@ def make_app():
 
 
 if __name__ == "__main__":
+    print(os.system('tree'))
     app = make_app()
     app.listen(port)
     tornado.ioloop.IOLoop.current().start()
