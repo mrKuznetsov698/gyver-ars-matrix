@@ -5,6 +5,7 @@ import tornado.websocket
 
 WIDTH = 80
 HEIGHT = 45
+port = int(os.getenv('PORT', 80))
 mx = [[0 for j in range(HEIGHT)] for i in range(WIDTH)]
 
 
@@ -57,5 +58,5 @@ def make_app():
 
 if __name__ == "__main__":
     app = make_app()
-    app.listen(80)
+    app.listen(port)
     tornado.ioloop.IOLoop.current().start()
