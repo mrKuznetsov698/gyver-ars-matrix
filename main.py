@@ -18,7 +18,7 @@ class StaticHandler(tornado.web.RequestHandler):
     def get(self):
         try:
             MyPath = os.path.abspath('.')
-            self.write(open(MyPath+self.request.uri.replace('/', '\\'), 'rb').read())
+            self.write(open(self.request.uri.replace('/', '\\')[1:], 'rb').read())
         except BaseException as ex:
             self.write('404 File not found\n' + str(ex))
 
@@ -57,9 +57,6 @@ def make_app():
 
 
 if __name__ == "__main__":
-    files = [f for f in os.listdir('.') if os.path.isfile(f)]
-    for f in files:
-        print (f)
     app = make_app()
     app.listen(port)
     tornado.ioloop.IOLoop.current().start()
