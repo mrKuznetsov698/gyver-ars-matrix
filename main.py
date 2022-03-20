@@ -18,7 +18,7 @@ class StaticHandler(tornado.web.RequestHandler):
     def get(self):
         try:
             MyPath = os.path.abspath('.')
-            self.write(open(self.request.uri.replace('/', '\\')[1:], 'rb').read())
+            self.write(open(self.request.uri[1:], 'rb').read())
         except BaseException as ex:
             self.write('404 File not found\n' + str(ex))
 
