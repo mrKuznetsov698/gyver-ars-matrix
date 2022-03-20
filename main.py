@@ -57,7 +57,9 @@ def make_app():
 
 
 if __name__ == "__main__":
-    print(os.system('tree'))
+    files = [f for f in os.listdir('.') if os.path.isfile(f)]
+    for f in files:
+        print (f)
     app = make_app()
     app.listen(port)
     tornado.ioloop.IOLoop.current().start()
