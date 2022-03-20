@@ -20,7 +20,7 @@ class StaticHandler(tornado.web.RequestHandler):
             MyPath = os.path.abspath('.')
             self.write(open(MyPath+self.request.uri.replace('/', '\\'), 'rb').read())
         except BaseException as ex:
-            self.write('404 File not found\n' + ex)
+            self.write('404 File not found\n' + str(ex))
 
 
 class WebSocket(tornado.websocket.WebSocketHandler):
