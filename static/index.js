@@ -76,7 +76,7 @@ function mouse(event){
             leds[x][y] = color(255, 0, 0)
         else
             leds[x][y] = 0
-        ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y)
+        ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y) 
     }
 }
 
