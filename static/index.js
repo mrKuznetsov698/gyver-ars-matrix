@@ -19,7 +19,8 @@ function setup() {
     canvas = createCanvas(Width, Height, P2D)
     init_arrays()
     noStroke()
-    document.addEventListener('mousedown', mouse)
+    document.addEventListener('mousedown', mousePress)
+    document.addEventListener('mouseup', mouseRelease)
     ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
     ws.onmessage = handle_message
     ws.onopen = () => {ws.send('initial update')}
@@ -33,27 +34,31 @@ function draw() {
     draw_matrix()
 }
 
-function draw_matrix(){
-    for (let i = 0; i < ledW; i++){
-        for (let j = 0; j < ledH; j++){
-            fill(leds[i][j])
-            rect(pos[i][j].x, pos[i][j].y, ledS, ledS)
-        }
+function mouseRelease(event) {
+    document.removeEventListener('mousemove', mouseMove)
+}
+
+function mousePress(event){
+    document.addEventListener('mousemove', mouseMove)
+}
+
+function handle_message(ms){
+    if (ms.data.startsWith('2,')){
+        let spl = ms.data.split(',')
+        leds[Number(spl[2])][Number(spl[3])] = spl[1] == '1' ? color(255, 0, 0) : 0
+    }
+    else if (ms.data.startsWith('IU')){
+        let data = ms.data.substring(2)
+        let arr
+        eval('arr = ' + data)
+        for (let i = 0; i < ledW; i++)
+            for (let j = 0; j < ledH; j++)
+                leds[i][j] = (arr[i][j] == 0 ? 0 : color(255, 0, 0))
     }
 }
 
-function init_arrays(){
-    for (let i = 0; i < ledW; i++) {
-        leds[i] = []
-        pos[i] = []
-        for (let j = 0; j < ledH; j++) {
-            leds[i].push(0)
-            pos[i].push(new Pos(ledOffset + i*(ledS + ledOffset), ledOffset + j*(ledS + ledOffset)))
-        }
-    }
-}
 
-function mouse(event){
+function mouseMove(event){
     if (mouseX <= ledOffset || mouseX >= Width-ledOffset)
         return
     if (mouseY <= ledOffset || mouseY >= Height-ledOffset)
@@ -76,21 +81,27 @@ function mouse(event){
             leds[x][y] = color(255, 0, 0)
         else
             leds[x][y] = 0
-        ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y) 
+        ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y)
     }
 }
 
-function handle_message(ms){
-    if (ms.data.startsWith('2,')){
-        let spl = ms.data.split(',')
-        leds[Number(spl[2])][Number(spl[3])] = spl[1] == '1' ? color(255, 0, 0) : 0
-    }
-    else if (ms.data.startsWith('IU')){
-        let data = ms.data.substring(2)
-        let arr
-        eval('arr = ' + data)
-        for (let i = 0; i < ledW; i++)
-            for (let j = 0; j < ledH; j++)
-                leds[i][j] = (arr[i][j] == 0 ? 0 : color(255, 0, 0))
+function init_arrays(){
+    for (let i = 0; i < ledW; i++) {
+        leds[i] = []
+        pos[i] = []
+        for (let j = 0; j < ledH; j++) {
+            leds[i].push(0)
+            pos[i].push(new Pos(ledOffset + i*(ledS + ledOffset), ledOffset + j*(ledS + ledOffset)))
+        }
     }
 }
+
+function draw_matrix(){
+    for (let i = 0; i < ledW; i++){
+        for (let j = 0; j < ledH; j++){
+            fill(leds[i][j])
+            rect(pos[i][j].x, pos[i][j].y, ledS, ledS)
+        }
+    }
+}
+
