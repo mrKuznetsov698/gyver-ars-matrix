@@ -39,6 +39,7 @@ function mouseRelease(event) {
 }
 
 function mousePress(event){
+    mouseMove(event)
     document.addEventListener('mousemove', mouseMove)
 }
 
