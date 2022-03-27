@@ -21,6 +21,7 @@ function setup() {
     noStroke()
     document.addEventListener('mousedown', mousePress)
     document.addEventListener('mouseup', mouseRelease)
+    document.addEventListener('dblclick', mouseDouble)
     ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
     ws.onmessage = handle_message
     ws.onopen = () => {ws.send('initial update')}
@@ -43,6 +44,32 @@ function mousePress(event){
     document.addEventListener('mousemove', mouseMove)
 }
 
+function mouseDouble(event){
+    let res = getXY()
+    let x = res[0]
+    let y = res[1]
+    if (x == undefined || y == undefined)
+        return
+    leds[x][y] = 0
+    ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y)
+}
+
+
+function mouseMove(event){
+    let res = getXY()
+    let x = res[0]
+    let y = res[1]
+    if (x == undefined || y == undefined)
+        return
+    if (!event.ctrlKey)
+        leds[x][y] = color(255, 0, 0)
+    else
+        leds[x][y] = 0
+    ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y)
+}
+
+// ------------------------------------------------------------------
+
 function handle_message(ms){
     if (ms.data.startsWith('2,')){
         let spl = ms.data.split(',')
@@ -58,12 +85,11 @@ function handle_message(ms){
     }
 }
 
-
-function mouseMove(event){
+function getXY(){
     if (mouseX <= ledOffset || mouseX >= Width-ledOffset)
-        return
+        return [undefined, undefined]
     if (mouseY <= ledOffset || mouseY >= Height-ledOffset)
-        return
+        return [undefined, undefined]
     let x
     let y
     for (let i = 0; i < ledW; i++) {
@@ -74,16 +100,11 @@ function mouseMove(event){
                 && mouseY <= pos[i][j].y + ledS) {
                 x = i
                 y = j
+                break
             }
         }
     }
-    if (x != undefined && y != undefined){
-        if (!event.ctrlKey)
-            leds[x][y] = color(255, 0, 0)
-        else
-            leds[x][y] = 0
-        ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y)
-    }
+    return [x, y]
 }
 
 function init_arrays(){
