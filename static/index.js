@@ -20,8 +20,6 @@ function setup() {
     init_arrays()
     noStroke()
     document.addEventListener('mousedown', mousePress)
-    document.addEventListener('mouseup', mouseRelease)
-    document.addEventListener('dblclick', mouseDouble)
     ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
     ws.onmessage = handle_message
     ws.onopen = () => {ws.send('initial update')}
@@ -35,27 +33,8 @@ function draw() {
     draw_matrix()
 }
 
-function mouseRelease(event) {
-    document.removeEventListener('mousemove', mouseMove)
-}
 
 function mousePress(event){
-    mouseMove(event)
-    document.addEventListener('mousemove', mouseMove)
-}
-
-function mouseDouble(event){
-    let res = getXY()
-    let x = res[0]
-    let y = res[1]
-    if (x == undefined || y == undefined)
-        return
-    leds[x][y] = 0
-    ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y)
-}
-
-
-function mouseMove(event){
     let res = getXY()
     let x = res[0]
     let y = res[1]
