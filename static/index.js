@@ -41,10 +41,10 @@ function mousePress(event){
     if (x == undefined || y == undefined)
         return
     if (!event.ctrlKey)
-        leds[x][y] = color(255, 0, 0)
+        leds[x][y] = colorpicker.value
     else
-        leds[x][y] = 0
-    ws.send((leds[x][y] == 0 ? "0," : "1,") + x + ',' + y)
+        leds[x][y] = '#000000'
+    ws.send(leds[x][y] + ',' + x + ',' + y)
 }
 
 // ------------------------------------------------------------------
@@ -52,7 +52,7 @@ function mousePress(event){
 function handle_message(ms){
     if (ms.data.startsWith('2,')){
         let spl = ms.data.split(',')
-        leds[Number(spl[2])][Number(spl[3])] = spl[1] == '1' ? color(255, 0, 0) : 0
+        leds[Number(spl[2])][Number(spl[3])] = spl[1]
     }
     else if (ms.data.startsWith('IU')){
         let data = ms.data.substring(2)
@@ -60,7 +60,7 @@ function handle_message(ms){
         eval('arr = ' + data)
         for (let i = 0; i < ledW; i++)
             for (let j = 0; j < ledH; j++)
-                leds[i][j] = (arr[i][j] == 0 ? 0 : color(255, 0, 0))
+                leds[i][j] = arr[i][j]
     }
 }
 
@@ -91,7 +91,7 @@ function init_arrays(){
         leds[i] = []
         pos[i] = []
         for (let j = 0; j < ledH; j++) {
-            leds[i].push(0)
+            leds[i].push('#000000')
             pos[i].push(new Pos(ledOffset + i*(ledS + ledOffset), ledOffset + j*(ledS + ledOffset)))
         }
     }
@@ -105,4 +105,3 @@ function draw_matrix(){
         }
     }
 }
-

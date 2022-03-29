@@ -6,7 +6,7 @@ import tornado.websocket
 WIDTH = 80
 HEIGHT = 45
 port = int(os.getenv('PORT', 80))
-mx = [[0 for j in range(HEIGHT)] for i in range(WIDTH)]
+mx = [['#000000' for j in range(HEIGHT)] for i in range(WIDTH)]
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -38,7 +38,7 @@ class WebSocket(tornado.websocket.WebSocketHandler):
             return
         try:
             spl = message.split(',')
-            mx[int(spl[1])][int(spl[2])] = int(spl[0])
+            mx[int(spl[1])][int(spl[2])] = spl[0]
             [client.write_message(f"2,{spl[0]},{spl[1]},{spl[2]}") for client in self.connections]
         except:
             return
@@ -58,5 +58,6 @@ def make_app():
 
 if __name__ == "__main__":
     app = make_app()
+    print('127.0.0.1:' + str(port))
     app.listen(port)
     tornado.ioloop.IOLoop.current().start()
