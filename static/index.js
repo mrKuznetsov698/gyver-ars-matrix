@@ -23,6 +23,7 @@ function setup() {
     ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
     ws.onmessage = handle_message
     ws.onopen = () => {ws.send('initial update')}
+	help()
 }
 
 let leds = []
@@ -45,6 +46,16 @@ function mousePress(event){
     else
         leds[x][y] = '#000000'
     ws.send(leds[x][y] + ',' + x + ',' + y)
+}
+
+function help(){
+	alert('***УПРАВЛЕНИЕ***\n' +
+		  '  Клик - ставит точку выбранного цвета\n' +
+		  '  Ctrl+клик - ставит точку чёрным цветом (стирает)\n' +
+		  '  В правом верхнем углу - штука для выбора цвета\n' + 
+		  '***СВЯЗ С РАЗРАБОТЧИКОМ***\n' + 
+		  '  Проблемы, баги, предложения, пожелания\n' + 
+		  '  почта: ars698@yandex.ru')
 }
 
 // ------------------------------------------------------------------
