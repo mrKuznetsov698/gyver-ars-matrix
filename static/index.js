@@ -20,6 +20,7 @@ function setup() {
     init_arrays()
     noStroke()
     document.addEventListener('mousedown', mousePress)
+    document.addEventListener('mouseup', mouseRelease)
     ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
     ws.onmessage = handle_message
     ws.onopen = () => {ws.send('initial update')}
@@ -34,8 +35,11 @@ function draw() {
     draw_matrix()
 }
 
+function mouseRelease(event){
+    document.removeEventListener('mousemove', mouseMove)
+}
 
-function mousePress(event){
+function mouseMove(event){
     let res = getXY()
     let x = res[0]
     let y = res[1]
@@ -46,6 +50,11 @@ function mousePress(event){
     else
         leds[x][y] = '#000000'
     ws.send(leds[x][y] + ',' + x + ',' + y)
+}
+
+function mousePress(event){
+    document.addEventListener('mousemove', mouseMove)
+    mouseMove(event)
 }
 
 function help(){
