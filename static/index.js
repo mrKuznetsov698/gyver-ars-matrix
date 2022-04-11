@@ -2,10 +2,12 @@ let ledW = 80
 let ledH = 45
 let ledS = 20
 let ledOffset = 1
+let colorpicker
 let canvas
 let Width = ledW * ledS + (ledW+1) * ledOffset
 let Height = ledH * ledS + (ledH+1) * ledOffset
 let ws
+let pipeteeFlag = false
 
 class Pos{
     constructor(x, y) {
@@ -19,6 +21,7 @@ function setup() {
     canvas = createCanvas(Width, Height, P2D)
     init_arrays()
     noStroke()
+    colorpicker = document.getElementById('colorpicker')
     document.addEventListener('mousedown', mousePress)
     document.addEventListener('mouseup', mouseRelease)
     ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
@@ -53,6 +56,14 @@ function mouseMove(event){
 }
 
 function mousePress(event){
+    if (pipeteeFlag){
+        pipeteeFlag = false
+        let pos = getXY()
+        if (!pos[0] || !pos[1])
+            return
+        colorpicker.value = leds[pos[0]][pos[1]]
+        return
+    }
     document.addEventListener('mousemove', mouseMove)
     mouseMove(event)
 }
@@ -63,11 +74,15 @@ function help(){
 		  '  Ctrl+клик - ставит точку чёрным цветом (стирает)\n' +
 		  '  В правом верхнем углу - штука для выбора цвета\n' + 
 		  '***СВЯЗЬ С РАЗРАБОТЧИКОМ***\n' + 
-		  '  Проблемы, баги, предложения, пожелания\n' + 
+		  '  Проблемы, баги, предложения, пожелания, что хотите\n' +
 		  '  почта: ars698@yandex.ru')
 }
 
 // ------------------------------------------------------------------
+
+function pipette(){
+    pipeteeFlag = true;
+}
 
 function handle_message(ms){
     if (ms.data.startsWith('2,')){
