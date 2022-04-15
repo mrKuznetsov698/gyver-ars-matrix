@@ -58,6 +58,6 @@ def make_app():
 
 if __name__ == "__main__":
     app = make_app()
-    print('127.0.0.1:' + str(port))
+    print('http://127.0.0.1:' + str(port) + '/')
     app.listen(port)
     tornado.ioloop.IOLoop.current().start()

@@ -7,7 +7,6 @@ let canvas
 let Width = ledW * ledS + (ledW+1) * ledOffset
 let Height = ledH * ledS + (ledH+1) * ledOffset
 let ws
-let pipeteeFlag = false
 
 class Pos{
     constructor(x, y) {
@@ -56,14 +55,6 @@ function mouseMove(event){
 }
 
 function mousePress(event){
-    if (pipeteeFlag){
-        pipeteeFlag = false
-        let pos = getXY()
-        if (!pos[0] || !pos[1])
-            return
-        colorpicker.value = leds[pos[0]][pos[1]]
-        return
-    }
     document.addEventListener('mousemove', mouseMove)
     mouseMove(event)
 }
@@ -79,10 +70,6 @@ function help(){
 }
 
 // ------------------------------------------------------------------
-
-function pipette(){
-    pipeteeFlag = true;
-}
 
 function handle_message(ms){
     if (ms.data.startsWith('2,')){
