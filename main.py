@@ -17,20 +17,21 @@ class MainHandler(tornado.web.RequestHandler):
 class StaticHandler(tornado.web.RequestHandler):
     def get(self):
         try:
-            MyPath = os.path.abspath('.')
             self.write(open(self.request.uri[1:], 'rb').read())
         except BaseException as ex:
             self.write('404 File not found\n' + str(ex))
 
 
 class WebSocket(tornado.websocket.WebSocketHandler):
-    connections = set()
-
-    def check_origin(self, origin):
-        return True
+    connections = []
+    #
+    # def check_origin(self, origin):
+    #     if 'Mozilla/5.0' not in self.request.headers._dict.get('User-Agent'):
+    #         return False
+    #     return True
 
     def open(self):
-        self.connections.add(self)
+        self.connections.append(self)
 
     def on_message(self, message):
         if message == 'initial update':
@@ -39,10 +40,11 @@ class WebSocket(tornado.websocket.WebSocketHandler):
         try:
             spl = message.split(',')
             mx[int(spl[1])][int(spl[2])] = spl[0]
-            [client.write_message(f"2,{spl[0]},{spl[1]},{spl[2]}") for client in self.connections]
+            if len(self.connections) > 1:
+                for client in [i for i in self.connections if i != self]:
+                    client.write_message(f"2,{spl[0]},{spl[1]},{spl[2]}")
         except:
             return
-        # [client.write_message('You send: ' + message) for client in self.connections]
 
     def on_close(self):
         self.connections.remove(self)

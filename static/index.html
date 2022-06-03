@@ -4,11 +4,66 @@
         <meta charset="UTF-8">
         <title>Pixel battle</title>
         <link rel="icon" href="/static/favicon.png">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
+            body{
+                background-color: black;
+                font-family: Ubuntu;
+            }
+            input[type="color"]{
+                width: 250px;
+            }
+            .back-popUp{
+                /*visibility: hidden;*/
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+            .popUp-content{
+                text-align: center;
+                margin: 0px auto 0px auto;
+                position: center;
+                width: 500px;
+                height: 400px;
+                background-color: gray;
+                border-radius: 10px;
+            }
+            button{
+                font-size: 16px;
+                border: none;
+                border-radius: 5px;
+                width: 100px;
+                height: 25px;
+            }
+            button:hover{
+                border: 1px solid black;
+                background-color: #dddddd;
+            }
+            button:active{
+                background-color: #bbbbbb;
+            }
+            ul{
+                text-align: left;
+            }
+        </style>
         <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
         <script src="/static/index.js"></script>
     </head>
-    <body style="background-color: black">
-        <input type="color" style="width: 250px" id="colorpicker" value="#ff0000">
+    <body>
+        <div id="back" class="back-popUp">
+            <div class="popUp-content">
+                <h1 id="Title">Hello!</h1>
+                <p id="Text">Здесь ты можешь рисовать разными цветами<br>Контакты с автором:</p>
+                <ul id="table">
+                    <li><a href="mailto:ars698@yandex.ru">Почта</a></li>
+                    <li><a href="https://t.me/MrKuznets0v">Телеграм</a></li>
+                </ul>
+                <button class="hide" id="hide">Hide</button>
+
+            </div>
+        </div>
+        <input type="color" id="colorpicker" value="#ff0000">
         <!---->
     </body>
 </html>

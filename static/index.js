@@ -4,6 +4,8 @@ let ledS = 20
 let ledOffset = 1
 let colorpicker
 let canvas
+let back
+let Hide
 let Width = ledW * ledS + (ledW+1) * ledOffset
 let Height = ledH * ledS + (ledH+1) * ledOffset
 let ws
@@ -21,16 +23,25 @@ function setup() {
     init_arrays()
     noStroke()
     colorpicker = document.getElementById('colorpicker')
+    back = document.getElementById('back')
+    Hide = document.getElementById('hide')
+    Hide.onclick = () => back.hidden = true
     document.addEventListener('mousedown', mousePress)
     document.addEventListener('mouseup', mouseRelease)
+    document.addEventListener('keydown', function (ev){if (ev.key == 'h') back.hidden = false})
     ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
     ws.onmessage = handle_message
     ws.onopen = () => {ws.send('initial update')}
-	help()
+    ws.onclose = ws.onerror = (err) => {
+        alert('WebSocket failed')
+        window.close()
+    }
 }
 
 let leds = []
 let pos = []
+let lastX
+let lastY
 
 function draw() {
     background(100)
@@ -41,10 +52,17 @@ function mouseRelease(event){
     document.removeEventListener('mousemove', mouseMove)
 }
 
+
 function mouseMove(event){
     let res = getXY()
     let x = res[0]
     let y = res[1]
+    if (lastX == x && lastY == y)
+        return
+    else {
+        lastX = x
+        lastY = y
+    }
     if (x == undefined || y == undefined)
         return
     if (!event.ctrlKey)
@@ -57,16 +75,6 @@ function mouseMove(event){
 function mousePress(event){
     document.addEventListener('mousemove', mouseMove)
     mouseMove(event)
-}
-
-function help(){
-	alert('***УПРАВЛЕНИЕ***\n' +
-		  '  Клик - ставит точку выбранного цвета\n' +
-		  '  Ctrl+клик - ставит точку чёрным цветом (стирает)\n' +
-		  '  В левом верхнем углу - штука для выбора цвета\n' +
-		  '***СВЯЗЬ С РАЗРАБОТЧИКОМ***\n' + 
-		  '  Проблемы, баги, предложения, пожелания, что хотите\n' +
-		  '  почта: ars698@yandex.ru')
 }
 
 // ------------------------------------------------------------------
