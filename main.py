@@ -2,6 +2,7 @@ import os
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
+# from save_image import create_image
 
 WIDTH = 80
 HEIGHT = 45
@@ -45,9 +46,16 @@ class WebSocket(tornado.websocket.WebSocketHandler):
         self.connections.remove(self)
 
 
+# class TestHandler(tornado.web.RequestHandler):
+#     def get(self):
+#         self.set_header('Content-type', 'image/bmp')
+#         self.write(open(create_image(arr=mx, arr_size=(WIDTH, HEIGHT), block_size=20), 'rb').read())
+
+
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
+        # (r"/save", TestHandler),
         (r"/static/.*", StaticHandler),
         (r"/websocket", WebSocket)
     ])
