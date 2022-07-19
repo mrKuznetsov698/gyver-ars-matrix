@@ -23,20 +23,20 @@ function setup() {
     init_arrays()
     noStroke()
     colorpicker = document.getElementById('colorpicker')
+    if (getMapFromCookie().get('color') != undefined)
+        colorpicker.value = getMapFromCookie().get('color');
     back = document.getElementById('back')
     Hide = document.getElementById('hide')
     Hide.onclick = () => back.hidden = true
     document.addEventListener('mousedown', mousePress)
     document.addEventListener('mouseup', mouseRelease)
     document.addEventListener('keydown', function (ev){ if (ev.key == 'h') back.hidden = false})
+    window.addEventListener('beforeunload', (ev) => document.cookie = `color=${colorpicker.value}`)
     ws = new WebSocket(`ws://${document.location.host}/websocket`)
     ws.onmessage = handle_message
-    ws.onopen = () => {ws.send('initial update')}
-
-    // ws.onclose = ws.onerror = (err) => {
-    //     alert('WebSocket failed')
-    //     window.close()
-    // }
+    ws.onopen = () => {
+        ws.send('initial update')
+    }
 }
 
 let leds = []
@@ -47,6 +47,14 @@ let lastY
 function draw() {
     background(100)
     draw_matrix()
+}
+
+function getMapFromCookie(){
+    let map = new Map();
+    let cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++)
+        map.set(cookies[i].split('=')[0], cookies[i].split('=')[1]);
+    return map;
 }
 
 function mouseRelease(event){
