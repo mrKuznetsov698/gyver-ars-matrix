@@ -1,13 +1,13 @@
-let ledW = 80
-let ledH = 45
-let ledS = 20
-let ledOffset = 1
+const ledW = 80
+const ledH = 45
+const ledS = 20
+const ledOffset = 1
 let colorpicker
 let canvas
 let back
 let Hide
-let Width = ledW * ledS + (ledW+1) * ledOffset
-let Height = ledH * ledS + (ledH+1) * ledOffset
+const Width = ledW * ledS + (ledW+1) * ledOffset
+const Height = ledH * ledS + (ledH+1) * ledOffset
 let ws
 
 class Pos{
@@ -28,14 +28,15 @@ function setup() {
     Hide.onclick = () => back.hidden = true
     document.addEventListener('mousedown', mousePress)
     document.addEventListener('mouseup', mouseRelease)
-    document.addEventListener('keydown', function (ev){if (ev.key == 'h') back.hidden = false})
-    ws = new WebSocket(document.baseURI.replace('http', 'ws') + 'websocket')
+    document.addEventListener('keydown', function (ev){ if (ev.key == 'h') back.hidden = false})
+    ws = new WebSocket(`ws://${document.location.host}/websocket`)
     ws.onmessage = handle_message
     ws.onopen = () => {ws.send('initial update')}
-    ws.onclose = ws.onerror = (err) => {
-        alert('WebSocket failed')
-        window.close()
-    }
+
+    // ws.onclose = ws.onerror = (err) => {
+    //     alert('WebSocket failed')
+    //     window.close()
+    // }
 }
 
 let leds = []

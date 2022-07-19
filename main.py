@@ -11,7 +11,7 @@ mx = [['#000000' for j in range(HEIGHT)] for i in range(WIDTH)]
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("static/index.html")
+        self.write(open("static/index.html", 'rb').read())
 
 
 class StaticHandler(tornado.web.RequestHandler):
@@ -24,11 +24,6 @@ class StaticHandler(tornado.web.RequestHandler):
 
 class WebSocket(tornado.websocket.WebSocketHandler):
     connections = []
-    #
-    # def check_origin(self, origin):
-    #     if 'Mozilla/5.0' not in self.request.headers._dict.get('User-Agent'):
-    #         return False
-    #     return True
 
     def open(self):
         self.connections.append(self)
@@ -61,5 +56,5 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
     print('http://127.0.0.1:' + str(port) + '/')
-    app.listen(port)
+    app.listen(port=port, address='0.0.0.0')
     tornado.ioloop.IOLoop.current().start()
