@@ -64,6 +64,8 @@ function mouseMove(event){
         lastX = x
         lastY = y
     }
+    if (leds[x][y] == colorpicker.value)
+        return;
     if (x == undefined || y == undefined)
         return
     if (!event.ctrlKey)
