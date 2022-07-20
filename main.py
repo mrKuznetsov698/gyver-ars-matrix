@@ -1,4 +1,5 @@
 import os
+import time
 
 import tornado.ioloop
 import tornado.web
@@ -6,7 +7,7 @@ import tornado.websocket
 import matrix
 
 port = int(os.getenv('PORT', 80))
-
+PRD = 3600 # seconds
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -23,11 +24,15 @@ class StaticHandler(tornado.web.RequestHandler):
 
 class WebSocket(tornado.websocket.WebSocketHandler):
     connections = []
+    tmr = time.time()
 
     def open(self):
         self.connections.append(self)
 
     def on_message(self, message):
+        if self.is_clear_time():
+            self.tmr = time.time()
+            [client.write_message('clear all') for client in self.connections]
         if message == 'initial update':
             self.write_message('IU' + str(matrix.mx))
             return
@@ -42,6 +47,9 @@ class WebSocket(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         self.connections.remove(self)
+
+    def is_clear_time(self):
+        return time.time() - self.tmr >= PRD
 
 
 def make_app():
