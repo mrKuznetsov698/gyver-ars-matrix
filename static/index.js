@@ -94,6 +94,8 @@ function mouseRelease(event){
 }
 
 function mouseMove(event){
+    if (!back.hidden)
+        return;
     let res = getXY();
     let x = res[0];
     let y = res[1];
@@ -113,6 +115,10 @@ function mouseMove(event){
         leds[x][y] = colorpicker.value;
     else
         leds[x][y] = '#000000';
+    if (ws.readyState == ws.CLOSED){
+        init_websocket();
+        return;
+    }
     ws.send(leds[x][y] + ',' + x + ',' + y);
 }
 

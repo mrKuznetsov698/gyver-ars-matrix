@@ -4,9 +4,11 @@ import time
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
-import matrix
 
 port = int(os.getenv('PORT', 80))
+WIDTH = 80
+HEIGHT = 45
+mx = [['#000000' for j in range(HEIGHT)] for i in range(WIDTH)]
 PRD = 3600 # seconds
 
 class MainHandler(tornado.web.RequestHandler):
@@ -34,11 +36,11 @@ class WebSocket(tornado.websocket.WebSocketHandler):
             self.tmr = time.time()
             [client.write_message('clear all') for client in self.connections]
         if message == 'initial update':
-            self.write_message('IU' + str(matrix.mx))
+            self.write_message('IU' + str(mx))
             return
         try:
             spl = message.split(',')
-            matrix.mx[int(spl[1])][int(spl[2])] = spl[0]
+            mx[int(spl[1])][int(spl[2])] = spl[0]
             if len(self.connections) > 1:
                 for client in [i for i in self.connections if i != self]:
                     client.write_message(f"2,{spl[0]},{spl[1]},{spl[2]}")
